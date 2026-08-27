@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import {
   motion,
   useScroll,
@@ -80,6 +80,23 @@ export default function GreenCodeLanding() {
     label: "투입 대기",
     accent: "#10B981",
   });
+
+  // 모바일 전용: STEP 1~4 스와이프 캐러셀의 현재 슬라이드
+  const [activeStep, setActiveStep] = useState(0);
+  const carouselViewportRef = useRef(null);
+  const [slideWidth, setSlideWidth] = useState(0);
+
+  // 캐러셀 뷰포트의 실제 픽셀 너비를 측정 (애니메이션/ 오버되는 드래그 제약을 동일한 px 단위로 계산)
+  useLayoutEffect(() => {
+    const node = carouselViewportRef.current;
+    if (!node) return undefined;
+
+    const updateWidth = () => setSlideWidth(node.clientWidth);
+    updateWidth();
+
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   // 버튼 참여 상태 및 컵 카운팅 상태
   const [isParticipated, setIsParticipated] = useState(false);
@@ -170,6 +187,43 @@ export default function GreenCodeLanding() {
   };
 
   const teamMembers = ["양시환", "진승호", "이현우", "손범수", "장효준", "장건웅"];
+
+  // 모바일 STEP 캐러셀용 데이터
+  const stepCarouselData = [
+    {
+      eyebrow: "STEP 01",
+      color: "var(--brand-color)",
+      title: "간편한 투입",
+      desc: "다 마신 음료 컵을 수거함 상단 투입구에 가볍게 올려놓습니다.",
+    },
+    {
+      eyebrow: "STEP 02",
+      color: "#3B82F6",
+      title: "1초 AI 스캔",
+      desc: "상단 카메라가 컵 내부에 얼음이나 방해 물질이 있는지 즉각적으로 파악합니다.",
+    },
+    {
+      eyebrow: "STEP 03",
+      color: "var(--brand-light)",
+      title: "즉각적인 피드백과 보상 시스템",
+      desc: "완벽히 비워진 컵은 초록불과 함께 리워드용 QR 코드가 생성됩니다. 이물질이 감지될 경우 다시 분리할 것을 안내합니다.",
+    },
+    {
+      eyebrow: "STEP 04",
+      color: "#FCD34D",
+      title: "가치 있는 수거와 자원 순환",
+      desc: "통과된 깨끗한 빈 컵들은 수거함에 모이며 리더보드 점수로 기록됩니다. 선별된 컵은 재활용 공정으로 전달되어 환경 관리 노동자의 수고를 크게 덜어줍니다.",
+    },
+  ];
+
+  const handleCarouselDragEnd = (e, info) => {
+    const threshold = 50;
+    if (info.offset.x < -threshold) {
+      setActiveStep((s) => Math.min(s + 1, stepCarouselData.length - 1));
+    } else if (info.offset.x > threshold) {
+      setActiveStep((s) => Math.max(s - 1, 0));
+    }
+  };
 
   return (
     <>
@@ -275,7 +329,7 @@ export default function GreenCodeLanding() {
           border: 1px solid var(--divider); flex: 1; min-width: 260px; max-width: 320px;
         }
 
-        .interactive-section { display: flex; flex-direction: column; background: var(--surface-dark); color: #fff; }
+        .interactive-section { display: flex; flex-direction: column; background: var(--surface-dark); color: #fff; height: 400vh; }
         @media (min-width: 768px) { .interactive-section { flex-direction: row; } }
 
         .guide-text { flex: 1; padding: 5% 10%; }
@@ -285,7 +339,22 @@ export default function GreenCodeLanding() {
         }
 
         .scroll-step { height: 100vh; display: flex; align-items: center; }
-        
+        .step-title { font-size: 2.5rem; margin-bottom: 1rem; line-height: 1.3; word-break: keep-all; }
+        .cup-visual { width: 100%; height: 300px; position: relative; margin-bottom: 24px; }
+
+        /* 모바일 전용: STEP 1~4 스와이프 캐러셀 (기본은 숨김, 데스크탑엔 노출 안 됨) */
+        .step-carousel { display: none; background: var(--surface-dark); color: #fff; }
+        .carousel-viewport { overflow: hidden; width: 100%; }
+        .carousel-track { display: flex; width: 100%; cursor: grab; touch-action: pan-y; }
+        .carousel-slide { flex: 0 0 100%; width: 100%; box-sizing: border-box; padding: 72px 28px 40px; text-align: center; }
+        .carousel-visual { width: 150px; height: 150px; margin: 0 auto 24px; color: #fff; }
+        .carousel-dots { display: flex; justify-content: center; gap: 8px; padding: 8px 0 48px; }
+        .carousel-dot {
+          width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0;
+          background: rgba(255,255,255,0.3); transition: background 0.2s, width 0.2s;
+        }
+        .carousel-dot.active { background: #fff; width: 22px; border-radius: 4px; }
+
         .data-metrics {
           padding: 120px 24px; background: var(--page-bg); text-align: center; border-top: 1px solid var(--divider);
         }
@@ -305,6 +374,33 @@ export default function GreenCodeLanding() {
         }
         .qna-title { font-size: 1.2rem; font-weight: 700; color: var(--font-primary); display: flex; justify-content: space-between; }
         .qna-body { margin-top: 10px; color: var(--font-secondary); font-size: 1.05rem; line-height: 1.6; }
+
+        .cta-wrapper { padding: 0 24px 120px; }
+        .cta-box { padding: 60px 20px; }
+
+        /* ===== 모바일 전용 레이아웃 (데스크탑 스타일은 위 규칙 그대로 유지) ===== */
+        @media (max-width: 767px) {
+          .intro-header { padding: 64px 20px 40px; min-height: auto; }
+          .crew-badge { padding: 8px 16px; }
+
+          .project-background { padding: 56px 20px; }
+          .bg-card { padding: 28px 20px; }
+
+          .problem-section { padding: 64px 20px; }
+          .problem-card { padding: 24px 20px; }
+
+          /* 데스크탑용 스크롤 인터랙션은 숨기고 스와이프 캐러셀로 대체 */
+          .interactive-section { display: none; }
+          .step-carousel { display: block; }
+          .step-title { font-size: 1.7rem; }
+
+          .data-metrics { padding: 64px 20px; }
+
+          .details-section { padding: 56px 20px; }
+
+          .cta-wrapper { padding: 0 20px 64px; }
+          .cta-box { padding: 40px 20px; }
+        }
       `}</style>
 
       {/* 내비게이션 */}
@@ -412,14 +508,14 @@ export default function GreenCodeLanding() {
       </div>
 
       {/* 인터랙티브 애니메이션 구역 */}
-      <div ref={scrollAreaRef} className="interactive-section" style={{ height: "400vh" }}>
+      <div ref={scrollAreaRef} className="interactive-section">
         <div className="guide-text">
           <div className="scroll-step">
             <div>
               <div className="eyebrow-text" style={{ color: "var(--brand-color)" }}>
                 STEP 01
               </div>
-              <h2 style={{ fontSize: "2.5rem", marginBottom: "1rem", lineHeight: 1.3 }}>
+              <h2 className="step-title">
                 간편한 투입
               </h2>
               <p className="desc-text" style={{ color: "rgba(255,255,255,0.7)" }}>
@@ -433,7 +529,7 @@ export default function GreenCodeLanding() {
               <div className="eyebrow-text" style={{ color: "#3B82F6" }}>
                 STEP 02
               </div>
-              <h2 style={{ fontSize: "2.5rem", marginBottom: "1rem", lineHeight: 1.3 }}>
+              <h2 className="step-title">
                 1초 AI 스캔
               </h2>
               <p className="desc-text" style={{ color: "rgba(255,255,255,0.7)" }}>
@@ -448,7 +544,7 @@ export default function GreenCodeLanding() {
               <div className="eyebrow-text" style={{ color: "var(--brand-light)" }}>
                 STEP 03
               </div>
-              <h2 style={{ fontSize: "2.5rem", marginBottom: "1rem", lineHeight: 1.3 }}>
+              <h2 className="step-title">
                 즉각적인 피드백과<br />
                 보상 시스템
               </h2>
@@ -464,7 +560,7 @@ export default function GreenCodeLanding() {
               <div className="eyebrow-text" style={{ color: "#FCD34D" }}>
                 STEP 04
               </div>
-              <h2 style={{ fontSize: "2.5rem", marginBottom: "1rem", lineHeight: 1.3 }}>
+              <h2 className="step-title">
                 가치 있는 수거와<br />
                 자원 순환
               </h2>
@@ -479,7 +575,7 @@ export default function GreenCodeLanding() {
 
         <div className="fixed-visual">
           <motion.div style={{ scale: cupScale, textAlign: "center", width: "100%", maxWidth: "300px" }}>
-            <div style={{ width: "100%", height: "300px", position: "relative", marginBottom: "24px" }}>
+            <div className="cup-visual">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={stepInfo.step}
@@ -505,6 +601,49 @@ export default function GreenCodeLanding() {
               {stepInfo.label}
             </div>
           </motion.div>
+        </div>
+      </div>
+
+      {/* 모바일 전용: STEP 1~4 스와이프 캐러셀 */}
+      <div className="step-carousel">
+        <div className="carousel-viewport" ref={carouselViewportRef}>
+          <motion.div
+            className="carousel-track"
+            drag={slideWidth > 0 ? "x" : false}
+            dragConstraints={{ left: -(slideWidth * (stepCarouselData.length - 1)), right: 0 }}
+            dragElastic={0.05}
+            dragMomentum={false}
+            onDragEnd={handleCarouselDragEnd}
+            animate={{ x: -activeStep * slideWidth }}
+            transition={{ type: "spring", stiffness: 300, damping: 32 }}
+          >
+            {stepCarouselData.map((s, i) => (
+              <div className="carousel-slide" key={i}>
+                <div className="carousel-visual">
+                  <CupPictogram step={i} />
+                </div>
+                <div className="eyebrow-text" style={{ color: s.color }}>
+                  {s.eyebrow}
+                </div>
+                <h2 className="step-title">{s.title}</h2>
+                <p className="desc-text" style={{ color: "rgba(255,255,255,0.7)" }}>
+                  {s.desc}
+                </p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        <div className="carousel-dots">
+          {stepCarouselData.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`carousel-dot${i === activeStep ? " active" : ""}`}
+              onClick={() => setActiveStep(i)}
+              aria-label={`STEP 0${i + 1}로 이동`}
+            />
+          ))}
         </div>
       </div>
 
@@ -633,8 +772,8 @@ export default function GreenCodeLanding() {
       </div>
 
       {/* CTA */}
-      <div style={{ padding: "0 24px 120px", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-        <div style={{ marginTop: "40px", padding: "60px 20px", background: "var(--surface-dark)", color: "#fff", borderRadius: "24px", boxShadow: "0 20px 40px rgba(6, 78, 59, 0.15)" }}>
+      <div className="cta-wrapper" style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+        <div className="cta-box" style={{ marginTop: "40px", background: "var(--surface-dark)", color: "#fff", borderRadius: "24px", boxShadow: "0 20px 40px rgba(6, 78, 59, 0.15)" }}>
           <h3 style={{ fontSize: "1.8rem", marginBottom: "16px", wordBreak: "keep-all" }}>
             지금 팝업 부스에서 직접 경험해 보세요
           </h3>
