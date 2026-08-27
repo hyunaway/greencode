@@ -381,7 +381,8 @@ export default function GreenCodeLanding() {
         /* ===== 모바일 전용 레이아웃 (데스크탑 스타일은 위 규칙 그대로 유지) ===== */
         @media (max-width: 767px) {
           .intro-header { padding: 64px 20px 40px; min-height: auto; }
-          .crew-badge { padding: 8px 16px; }
+          .crew-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+          .crew-badge { padding: 8px 8px; }
 
           .project-background { padding: 56px 20px; }
           .bg-card { padding: 28px 20px; }
@@ -420,8 +421,8 @@ export default function GreenCodeLanding() {
           다시 자원이 될 수 있을까요?
         </h1>
         <p className="desc-text" style={{ marginTop: "24px" }}>
-          스마트 렌즈가 단 1초 만에 판별합니다.<br />
-          오염되지 않은 컵만 선별하는 똑똑한 캠퍼스 분리수거 솔루션입니다.
+          스마트 렌즈가 단 1초 만에 컵의 상태를 판별합니다.<br />
+          오염되지 않은 컵만 정확하게 선별하는 똑똑한 캠퍼스 분리수거 솔루션입니다.
         </p>
 
         <div className="crew-list">
@@ -443,9 +444,9 @@ export default function GreenCodeLanding() {
             <div className="bg-card">
               <h3>해결하고자 하는 문제</h3>
               <p className="desc-text" style={{ textAlign: "left" }}>
-                교내 카페 컵 배출 시 이물질이 무분별하게 섞여 재활용률이
-                저하되는 상황입니다. 개인의 분리배출 노력이 어떤 실질적 변화를
-                만드는지 체감하기 어려워 잘못된 배출이 반복되고 있습니다.
+                교내 카페에서 배출되는 플라스틱 컵에 이물질이 무분별하게 섞이면서
+                재활용 효율이 떨어지고 있습니다. 또한 개인이 올바르게 분리배출하더라도
+                그 결과를 직접 체감하기 어려워, 잘못된 배출 방식이 반복되고 있습니다.
               </p>
             </div>
 
@@ -454,10 +455,10 @@ export default function GreenCodeLanding() {
             <div className="bg-card">
               <h3>문제를 해결하고자 하는 이유</h3>
               <p className="desc-text" style={{ textAlign: "left" }}>
-                단순한 계도나 개인의 선의에만 의존하는 캠페인은 인식 변화를
-                이끌어내기 어렵습니다. 따라서 AI를 통한 피드백 체험, 시각적
-                애니메이션, 그리고 게이미피케이션이 결합될 때 이용자가
-                자발적으로 한 번씩이라도 분리배출에 동참하게 될 것입니다.
+                단순한 계도나 개인의 선의에만 의존하는 캠페인만으로는 지속적인
+                행동 변화를 이끌어내기 어렵습니다. 그린코드는 AI 기반의 즉각적인 피드백과
+                직관적인 애니메이션, 게이미피케이션 요소를 결합해 이용자가 분리배출의 결과를
+                직접 체감하고 자발적으로 참여할 수 있는 환경을 만들고자 합니다.
               </p>
             </div>
           </div>
@@ -471,16 +472,13 @@ export default function GreenCodeLanding() {
             OUR MISSION
           </div>
           <h2 style={{ fontSize: "2.2rem", fontWeight: 800, color: "var(--font-primary)", marginBottom: "24px", lineHeight: 1.4, wordBreak: "keep-all" }}>
-            열심히 분리배출해도<br />
             재활용이 어려운 이유
           </h2>
           <p className="desc-text">
-            컵 안에 남은 얼음 한 조각, 무심코 꽂아둔 종이 홀더 하나 때문에 기껏
-            모은 플라스틱 컵들이 전부 소각장으로 향한다는 사실을 알고
-            계셨습니까?
+            컵 안에 남은 얼음 한 조각, 무심코 끼워둔 컵홀더 하나 때문에
+            재활용할 수 있는 플라스틱 컵이 소각장으로 향하고 있다는 사실, 알고 계신가요?
             <br />
-            그린코드는 누군가의 '귀찮음' 때문에 버려지는 자원들을 '기술'을 통해
-            구출하고자 합니다.
+            그린코드는 작은 <b>귀찮음</b>으로 인해 버려지는 자원들을 <b>기술</b>의 힘으로 다시 자원으로 되돌리고자 합니다.
           </p>
 
           <div className="problem-cards">
@@ -490,8 +488,8 @@ export default function GreenCodeLanding() {
                 남은 음료와 얼음
               </h3>
               <p className="desc-text">
-                재활용 공정 기계를 고장 내거나 심한 악취를 유발해 재활용률을
-                떨어뜨립니다.
+                재활용 공정 기계의 고장을 유발하거나
+                심한 악취를 발생시켜 전체 재활용 효율을 떨어뜨립니다.
               </p>
             </div>
             <div className="problem-card">
@@ -519,7 +517,7 @@ export default function GreenCodeLanding() {
                 간편한 투입
               </h2>
               <p className="desc-text" style={{ color: "rgba(255,255,255,0.7)" }}>
-                다 마신 음료 컵을 수거함 상단 투입구에 가볍게 올려놓습니다.
+                다 마신 음료 컵을 수거함 상단 투입구에 올려놓습니다.
               </p>
             </div>
           </div>
@@ -659,7 +657,7 @@ export default function GreenCodeLanding() {
           일회용 컵 하나를 제대로 재활용할 때마다 약 15g의 온실가스를 줄일 수
           있습니다.
           <br />
-          우리의 참여가 만드는 변화를 숫자로 직접 확인해 보시기 바랍니다.
+          우리의 작은 참여가 어떤 변화를 만들었는지 함께 살펴볼까요?
         </p>
 
         <div className="metrics-grid">
@@ -736,7 +734,7 @@ export default function GreenCodeLanding() {
             {activeFaq === 0 && (
               <div className="qna-body">
                 AI가 이물질로 판별하여 재활용 투입구를 열지 않습니다. 남은
-                음료나 얼음을 개수대에 먼저 버린 후 다시 투입해 주시기 바랍니다.
+                음료나 얼음을 처리한 후 다시 투입해 주시기 바랍니다.
               </div>
             )}
           </div>
