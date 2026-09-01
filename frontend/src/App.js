@@ -780,21 +780,22 @@ export default function GreenCodeLanding() {
             있습니다.
           </p>
           <button
-            style={{
-              padding: "18px 40px",
-              fontSize: "1.1rem",
-              fontWeight: "bold",
-              background: "var(--brand-color)",
-              color: "#fff",
-              border: "none",
-              borderRadius: "99px",
-              cursor: "pointer",
-              transition: "transform 0.2s",
-              boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)",
-            }}
-          >
-            구글 폼으로 인증하기
-          </button>
+  onClick={() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfxYsn2FZKC2jQtWEqduu66SVSBBZeaxMJKAqHQSri1x8ldJQ/viewform"}
+  style={{
+    padding: "18px 40px",
+    fontSize: "1.1rem",
+    fontWeight: "bold",
+    background: "var(--brand-color)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "99px",
+    cursor: "pointer",
+    transition: "transform 0.2s",
+    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)",
+  }}
+>
+  구글 폼으로 인증하기
+</button>
         </div>
       </div>
     </>
